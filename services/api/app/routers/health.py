@@ -6,6 +6,7 @@ from app.models import MachineAsset
 router = APIRouter(tags=["Health & Diagnostics"])
 
 @router.get("/health")
+@router.get("/healthz")
 def health_check(session: Session = Depends(get_session)):
     db_ok = True
     try:
