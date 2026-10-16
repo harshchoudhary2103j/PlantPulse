@@ -1,7 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from sqlmodel import SQLModel, Field
 from pydantic import BaseModel
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 # -------------------------------------------------------------
 # Database Models
@@ -24,8 +27,8 @@ class MachineAsset(SQLModel, table=True):
     current_temp: float = Field(default=42.0)
     current_current: float = Field(default=12.2)
     current_rpm: float = Field(default=8200.0)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
 
 
 class SparePartInventory(SQLModel, table=True):
@@ -42,7 +45,7 @@ class SparePartInventory(SQLModel, table=True):
     lead_time: str
     min_threshold: int = Field(default=2)
     supplier: str
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=utc_now)
 
 
 class WorkOrderHistory(SQLModel, table=True):
@@ -58,8 +61,8 @@ class WorkOrderHistory(SQLModel, table=True):
     duration_hours: float
     cost_total: float
     part_sku_used: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    completed_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
+    completed_at: datetime = Field(default_factory=utc_now)
 
 
 class OEMManualChunk(SQLModel, table=True):
@@ -101,7 +104,7 @@ class MaintenanceTicket(SQLModel, table=True):
     tool_trace: str # JSON string of tool execution steps
     approved_by: Optional[str] = None
     approved_at: Optional[datetime] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class TelemetryReading(SQLModel, table=True):
@@ -116,7 +119,7 @@ class TelemetryReading(SQLModel, table=True):
     is_anomaly: bool = Field(default=False)
     anomaly_score: float = Field(default=0.0)
     classification: str = Field(default="NORMAL") # NORMAL, FILTERED_NOISE, ANOMALY_TRIGGER
-    timestamp: datetime = Field(default_factory=datetime.utcnow, index=True)
+    timestamp: datetime = Field(default_factory=utc_now, index=True)
 
 
 class SimulationLog(SQLModel, table=True):
@@ -126,7 +129,7 @@ class SimulationLog(SQLModel, table=True):
     machine_id: str = Field(index=True)
     event_type: str # NOISE_SPIKE_INJECTED, NOISE_FILTERED, DEGRADATION_TRIGGERED, ANOMALY_DETECTED
     details: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow, index=True)
+    timestamp: datetime = Field(default_factory=utc_now, index=True)
 
 
 # -------------------------------------------------------------

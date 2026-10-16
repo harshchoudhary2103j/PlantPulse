@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from sqlmodel import Session, select
 from app.database import engine
 from app.models import MachineAsset, SparePartInventory, WorkOrderHistory, OEMManualChunk
@@ -229,7 +229,7 @@ def seed_database():
         # -----------------------------------------------------------------
         # 3. Historical CMMS Work Orders (8 Records)
         # -----------------------------------------------------------------
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         work_orders = [
             WorkOrderHistory(
                 id="WO-2024-8812",

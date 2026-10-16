@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
@@ -49,7 +49,7 @@ def approve_ticket(
     operator_name = body.operator_name if body else "Plant Chief Engineer (Austin Line B)"
     ticket.status = "APPROVED"
     ticket.approved_by = operator_name
-    ticket.approved_at = datetime.utcnow()
+    ticket.approved_at = datetime.now(timezone.utc)
     session.add(ticket)
 
     # Decrement ERP spare part inventory
@@ -63,7 +63,7 @@ def approve_ticket(
         if part.stock_count > 0:
             part.stock_count -= 1
             part.reserved_count += 1
-            part.updated_at = datetime.utcnow()
+            part.updated_at = datetime.now(timezone.utc)
             session.add(part)
             part_decremented = True
             new_stock = part.stock_count
