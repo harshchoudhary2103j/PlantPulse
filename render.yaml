@@ -1,0 +1,39 @@
+services:
+  # -------------------------------------------------------------
+  # PlantPulse Backend API (FastAPI + SQLModel + SSE Worker)
+  # -------------------------------------------------------------
+  - type: web
+    name: plantpulse-api
+    runtime: docker
+    rootDir: services/api
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: HOST
+        value: 0.0.0.0
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATABASE_URL
+        value: sqlite:///./plantpulse.db
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # -------------------------------------------------------------
+  # PlantPulse Frontend Web App (Next.js 14 App Router)
+  # -------------------------------------------------------------
+  - type: web
+    name: plantpulse-web
+    runtime: node
+    rootDir: services/web
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: plantpulse-api
+          property: host
